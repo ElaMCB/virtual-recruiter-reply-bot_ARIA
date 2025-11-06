@@ -1,24 +1,66 @@
-# AI Recruiter Response Agent
+```
+    ___    ____  ______ 
+   /   |  / __ \/  _/ /_
+  / /| | / /_/ // // __/
+ / ___ |/ _, _// // /_  
+/_/  |_/_/ |_/___/\__/  
+                        
+Automated Recruiter Interaction Assistant
+```
 
-An autonomous agent that handles job recruiter communications across multiple channels (Email, SMS, Voice).
+# ARIA - Virtual Recruiter Reply Bot
 
-## 🎯 Features
+**Your AI assistant that responds to AI recruiters, so you can focus on landing the job.**
 
-- **Email Automation**: Automatically read and respond to recruiter emails
-- **SMS Handling**: Process and reply to text messages from recruiters
-- **State Management**: Track conversation context across all interactions
-- **LLM-Powered Responses**: Generate professional, context-aware replies
-- **Multi-Channel Support**: Unified handling of email, SMS, and future voice integration
+ARIA is an autonomous agent that handles job recruiter communications across multiple channels (Email, SMS, Voice). When virtual recruiters like "Alex" reach out, ARIA responds professionally on your behalf, gathering information, asking the right questions, and escalating to you when needed.
 
-## 💰 100% Free Implementation
+---
+
+## Features
+
+**Email Automation**
+- Automatically read and respond to recruiter emails via Gmail API
+- Thread-aware conversations with full context tracking
+- Professional responses based on your profile and preferences
+
+**SMS Handling**
+- Process and reply to text messages from recruiters
+- Free email-to-SMS gateway integration (no Twilio fees)
+- Handles special keywords (STOP, CALL, etc.)
+
+**Intelligent State Management**
+- Track conversation context across all interactions
+- SQLite-based conversation history
+- Multi-stage conversation tracking (initial contact → screening → negotiation)
+
+**LLM-Powered Responses**
+- Generate professional, context-aware replies
+- Local Ollama (free) or cloud APIs (OpenAI, Claude)
+- Customizable tone, style, and templates
+
+**Multi-Channel Support**
+- Unified handling of email, SMS, and future voice integration
+- Single codebase for all communication channels
+- Extensible architecture for additional channels
+
+---
+
+## 100% Free Implementation
 
 This project uses only free services:
-- ✅ Gmail API (free, unlimited)
-- ✅ Local LLM via Ollama (free, runs on your machine)
-- ✅ Email-to-SMS gateways (free alternative to Twilio)
-- ✅ Python with free hosting options
 
-## 🚀 Quick Start
+| Component | Free Solution | Typical Cost |
+|-----------|---------------|--------------|
+| LLM | Ollama (local) | $50-100/month |
+| Email | Gmail API | $0 |
+| SMS | Email-to-SMS gateway | $10-20/month |
+| Database | SQLite | $0 |
+| Hosting | Your computer/Raspberry Pi | $5-20/month |
+| **Total** | **$0/month** | **$65-140/month** |
+
+---
+
+## Quick Start
 
 ### Prerequisites
 
@@ -55,70 +97,126 @@ python main.py
 python main.py --daemon
 ```
 
-## 📁 Project Structure
+---
+
+## Project Structure
 
 ```
-ai-recruiter-agent/
+virtual-recruiter-reply-bot/
 ├── agents/
-│   ├── email_agent.py      # Email handling
-│   ├── sms_agent.py         # SMS handling
-│   └── voice_agent.py       # Future voice handling
+│   ├── email_agent.py      # Email handling via Gmail API
+│   ├── sms_agent.py         # SMS handling via email-to-SMS gateway
+│   └── voice_agent.py       # Future voice handling (Twilio)
 ├── core/
-│   ├── orchestrator.py      # Central coordinator
-│   ├── state_manager.py     # Conversation state tracking
-│   └── llm_processor.py     # LLM response generation
+│   ├── orchestrator.py      # Central coordinator for all channels
+│   ├── state_manager.py     # Conversation state tracking (SQLite)
+│   └── llm_processor.py     # LLM response generation (Ollama/OpenAI/Claude)
 ├── config/
-│   ├── profile.yaml         # Your professional profile
-│   └── prompts.yaml         # System prompts
+│   ├── profile.yaml         # Your professional profile and preferences
+│   └── prompts.yaml         # AI system prompts and templates
+├── docs/
+│   ├── QUICK_START.md       # Get started in 15 minutes
+│   ├── ARCHITECTURE.md      # System design and architecture
+│   ├── EXAMPLE_RESPONSES.md # Real response examples
+│   ├── gmail_setup.md       # Gmail API setup guide
+│   ├── ollama_setup.md      # Ollama installation guide
+│   ├── sms_setup.md         # SMS configuration
+│   └── DEPLOYMENT.md        # 24/7 deployment options
 ├── utils/
-│   ├── gmail_helper.py      # Gmail API wrapper
 │   └── logger.py            # Logging utilities
 ├── data/
-│   └── conversations.db     # SQLite database for state
+│   └── conversations.db     # SQLite database (auto-created)
 ├── main.py                  # Entry point
-├── requirements.txt
-└── .env.example
+├── requirements.txt         # Python dependencies
+└── env.example             # Configuration template
 ```
 
-## ⚠️ Legal & Ethical Considerations
+---
 
-- Agent identifies itself when necessary
+## How ARIA Works
+
+**1. Monitor**
+ARIA checks your email and SMS channels periodically for new recruiter messages.
+
+**2. Parse**
+Extracts key information: company name, position title, salary range, work arrangement, tech stack, and more.
+
+**3. Analyze**
+Compares the opportunity against your profile and job criteria to determine fit.
+
+**4. Generate**
+Creates a professional, context-aware response using LLM (local Ollama or cloud API).
+
+**5. Respond**
+Sends the reply via the appropriate channel (email or SMS).
+
+**6. Track**
+Updates conversation state in SQLite database for context-aware follow-ups.
+
+**7. Escalate**
+When important decisions are needed (salary negotiation, interview scheduling, final offers), ARIA notifies you for human intervention.
+
+---
+
+## Conversation Stages
+
+ARIA tracks conversations through multiple stages:
+
+- **initial_contact** - First message from recruiter
+- **information_gathering** - Collecting details about the role
+- **screening** - Answering qualification questions
+- **negotiation** - Discussing compensation and benefits (escalates to you)
+- **scheduling** - Arranging interviews (escalates to you)
+- **declined** - Not a good fit, politely declined
+
+---
+
+## Safety & Ethics
+
+**Transparency**
+- ARIA can identify itself as an AI assistant when appropriate
 - All interactions are logged for your review
-- Option to escalate to human at any time
-- Respects STOP/unsubscribe requests
-- Does not make final commitments without approval
+- Full conversation history maintained in database
 
-## 🔄 How It Works
+**Human Oversight**
+- Automatic escalation for important decisions
+- Option to require approval for all responses
+- Manual mode available for sensitive conversations
 
-1. **Monitor**: Agent checks email/SMS periodically
-2. **Parse**: Extracts key information (company, role, requirements)
-3. **Decide**: Determines appropriate response based on your profile
-4. **Generate**: Creates professional reply using LLM
-5. **Send**: Dispatches response via appropriate channel
-6. **Track**: Updates conversation state for context
+**Compliance**
+- Respects STOP/unsubscribe requests automatically
+- Never makes final commitments without your approval
+- Follows professional communication standards
 
-## 📊 Conversation Stages
+---
 
-- `initial_contact`: First message from recruiter
-- `information_gathering`: Getting details about role
-- `screening`: Answering qualification questions
-- `negotiation`: Discussing compensation/benefits
-- `scheduling`: Arranging interviews
-- `escalation`: Requires human intervention
+## Documentation
 
-## 🛠️ Advanced Configuration
+Comprehensive guides available in the `docs/` folder:
 
-See `docs/` folder for:
-- Gmail API setup guide
-- SMS integration options
-- Custom prompt engineering
-- Voice integration (future)
+- **QUICK_START.md** - Get ARIA running in 15 minutes
+- **ARCHITECTURE.md** - System design and free solution strategy
+- **EXAMPLE_RESPONSES.md** - Real-world response examples
+- **gmail_setup.md** - Gmail API setup walkthrough
+- **ollama_setup.md** - Free local LLM installation
+- **sms_setup.md** - SMS configuration options
+- **DEPLOYMENT.md** - Run ARIA 24/7 for free
 
-## 🤝 Contributing
+---
 
-This is a personal project but feel free to adapt for your needs!
+## Contributing
 
-## 📝 License
+This is a personal project, but you're welcome to:
+- Fork and customize for your needs
+- Submit improvements via pull requests
+- Share your success stories
+- Report issues or suggestions
 
-MIT License - Use freely for personal job search automation
+---
+
+## License
+
+MIT License - See LICENSE file for details.
+
+Use freely for personal job search automation. No warranty provided.
 
