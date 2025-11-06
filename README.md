@@ -204,6 +204,29 @@ Comprehensive guides available in the `docs/` folder:
 
 ---
 
+## Related Projects
+
+**Job Search Automation Suite**
+
+Companion project for proactive job searching. While ARIA handles incoming recruiter messages, the Job Search Automation Suite helps you find and apply to jobs.
+
+**Portfolio:** https://elamcb.github.io/job-search-automation/
+
+**What it does:**
+- Intelligent job matching (85% accuracy) across multiple platforms
+- Application status tracking and follow-up reminders
+- Interview analytics and preparation recommendations
+- Resume optimization for ATS systems
+- AI-powered skill matching and relevance scoring
+
+**When to use together:**
+- **Job Search Automation**: Actively search and apply to jobs you want
+- **ARIA**: Passively handle recruiters who reach out to you
+
+Together, they provide complete coverage of your job search - both active hunting and passive opportunity management!
+
+---
+
 ## Contributing
 
 This is a personal project, but you're welcome to:
