@@ -21,10 +21,14 @@ skills:
     - TestNG/JUnit
   
 preferences:
-  work_arrangement: "Remote preferred, hybrid acceptable"
+  work_arrangement: "Remote preferred, hybrid acceptable in Alpharetta/Atlanta area"
   salary_range:
-    minimum: 120000
-    target: 150000
+    # For salaried positions (annual)
+    minimum_annual: 120000
+    target_annual: 150000
+    # For contract/hourly positions
+    minimum_hourly: 65
+    target_hourly: 75
     currency: "USD"
   benefits_important:
     - Health insurance
@@ -36,16 +40,17 @@ job_criteria:
   # Agent will auto-decline if these aren't met
   must_have:
     - title_contains: ["architect", "lead", "senior", "principal"]
-    - remote_option: true
+    - remote_option: false  # Can consider onsite in Alpharetta/Atlanta
   
   nice_to_have:
-    - tech_stack: ["Java", "Selenium", "Cloud"]
+    - tech_stack: ["Java", "Selenium", "Cloud", "CI/CD"]
     - company_size: "medium to large"
   
   auto_decline:
-    - salary_below: 100000
+    - salary_below_annual: 100000
+    - hourly_rate_below: 65  # Auto-decline anything under $65/hr
     - keywords: ["unpaid", "commission only", "internship"]
-    - contract_length_under_months: 3
+    - contract_length_under_months: 3  # Alex's offer is 6 months, so OK
 
 communication_style:
   tone: "professional"
