@@ -26,9 +26,13 @@ preferences:
     # For salaried positions (annual)
     minimum_annual: 120000
     target_annual: 150000
-    # For contract/hourly positions
-    minimum_hourly: 65
-    target_hourly: 75
+    # For contract/hourly positions (tiered by level)
+    architect_minimum: 65
+    architect_target: 75
+    senior_engineer_minimum: 50
+    senior_engineer_target: 60
+    mid_level_minimum: 50
+    mid_level_target: 55
     currency: "USD"
   benefits_important:
     - Health insurance
