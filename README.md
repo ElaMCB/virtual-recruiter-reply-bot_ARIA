@@ -44,6 +44,13 @@ ARIA is an autonomous agent that handles job recruiter communications across mul
 - Local Ollama (free) or cloud APIs (OpenAI, Claude)
 - Customizable tone, style, and templates
 
+**Interview Automation**
+- Automatically detects and opens interview links from recruiter emails
+- Browser automation for navigating interview platforms
+- Code snippet analysis and review capabilities
+- Intelligent question answering for technical interviews
+- Tracks interview progress and links to conversation history
+
 **Multi-Channel Support**
 - Unified handling of email, SMS, and future voice integration
 - Single codebase for all communication channels
@@ -60,6 +67,7 @@ This project uses only free services:
 | LLM | Ollama (local) | $50-100/month |
 | Email | Gmail API | $0 |
 | SMS | Email-to-SMS gateway | $10-20/month |
+| Browser Automation | Playwright (open source) | $0 |
 | Database | SQLite | $0 |
 | Hosting | Your computer/Raspberry Pi | $5-20/month |
 | **Total** | **$0/month** | **$65-140/month** |
@@ -79,6 +87,9 @@ This project uses only free services:
 ```bash
 # Install dependencies
 pip install -r requirements.txt
+
+# Install Playwright for interview automation
+playwright install chromium
 
 # Install Ollama (for local LLM)
 # Visit: https://ollama.ai/download
@@ -112,6 +123,7 @@ virtual-recruiter-reply-bot/
 ├── agents/
 │   ├── email_agent.py      # Email handling via Gmail API
 │   ├── sms_agent.py         # SMS handling via email-to-SMS gateway
+│   ├── interview_agent.py   # Interview automation and browser interaction
 │   └── voice_agent.py       # Future voice handling (Twilio)
 ├── core/
 │   ├── orchestrator.py      # Central coordinator for all channels
@@ -159,7 +171,10 @@ Sends the reply via the appropriate channel (email or SMS).
 **6. Track**
 Updates conversation state in SQLite database for context-aware follow-ups.
 
-**7. Escalate**
+**7. Interview**
+When interview links are detected in emails, ARIA automatically opens and navigates interview platforms, analyzes code snippets, and assists with technical questions.
+
+**8. Escalate**
 When important decisions are needed (salary negotiation, interview scheduling, final offers), ARIA notifies you for human intervention.
 
 ---
@@ -171,8 +186,9 @@ ARIA tracks conversations through multiple stages:
 - **initial_contact** - First message from recruiter
 - **information_gathering** - Collecting details about the role
 - **screening** - Answering qualification questions
+- **scheduling** - Arranging interviews (triggers interview agent)
+- **interview** - Technical interview session (code analysis, Q&A)
 - **negotiation** - Discussing compensation and benefits (escalates to you)
-- **scheduling** - Arranging interviews (escalates to you)
 - **declined** - Not a good fit, politely declined
 
 ---
@@ -206,6 +222,8 @@ Comprehensive guides available in the `docs/` folder:
 - **gmail_setup.md** - Gmail API setup walkthrough
 - **ollama_setup.md** - Free local LLM installation
 - **sms_setup.md** - SMS configuration options
+- **INTERVIEW_AGENT.md** - Interview automation documentation
+- **INTERVIEW_QUICK_START.md** - Quick start for interview agent
 - **DEPLOYMENT.md** - Run ARIA 24/7 for free
 
 ---
