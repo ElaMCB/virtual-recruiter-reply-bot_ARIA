@@ -79,8 +79,65 @@ class StateManager:
             )
         """)
         
+        # Create interview sessions table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS interview_sessions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                url TEXT UNIQUE NOT NULL,
+                company TEXT,
+                position TEXT,
+                state TEXT,
+                status TEXT DEFAULT 'active',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        
         conn.commit()
         conn.close()
+    
+    def save_interview_state(self, interview_url: str, state: dict):
+        """Save interview state to database."""
+        import json
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            INSERT OR REPLACE INTO interview_sessions 
+            (url, company, position, state, updated_at) 
+            VALUES (?, ?, ?, ?, datetime('now'))
+        """, (
+            interview_url,
+            state.get("company"),
+            state.get("position"),
+            json.dumps(state)
+        ))
+        
+        conn.commit()
+        conn.close()
+    
+    def get_interview_state(self, interview_url: str) -> dict:
+        """Get interview state from database."""
+        import json
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        row = cursor.execute(
+            "SELECT state FROM interview_sessions WHERE url = ?",
+            (interview_url,)
+        ).fetchone()
+        
+        conn.close()
+        
+        if row:
+            return json.loads(row[0])
+        return {}
+    
+    def update_interview_state(self, interview_url: str, update: dict):
+        """Update interview state."""
+        current = self.get_interview_state(interview_url)
+        current.update(update)
+        self.save_interview_state(interview_url, current)
     
     def create_conversation(self, thread_id: str, channel: str, initial_message: Dict) -> ConversationState:
         """Create a new conversation state"""

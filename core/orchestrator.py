@@ -11,6 +11,7 @@ from core.state_manager import StateManager, ConversationState
 from core.llm_processor import LLMProcessor
 from agents.email_agent import EmailAgent
 from agents.sms_agent import SMSAgent
+from agents.interview_agent import InterviewAgent
 
 
 class JobApplicationOrchestrator:
@@ -48,6 +49,13 @@ class JobApplicationOrchestrator:
         self.sms_agent = SMSAgent(
             email_agent=self.email_agent,
             default_gateway=os.getenv('SMS_EMAIL_GATEWAY', '@txt.att.net')
+        )
+        
+        # Interview agent
+        self.interview_agent = InterviewAgent(
+            llm_processor=self.llm_processor,
+            state_manager=self.state_manager,
+            headless=os.getenv('INTERVIEW_HEADLESS', 'false').lower() == 'true'
         )
         
         self.auto_reply_enabled = os.getenv('AUTO_REPLY_ENABLED', 'true').lower() == 'true'
@@ -151,6 +159,21 @@ class JobApplicationOrchestrator:
                     updates['work_arrangement'] = extracted_info['work_arrangement']
                 
                 self.state_manager.update_state(thread_id, updates)
+                
+                # Check for interview links before escalation
+                interview_url = self._extract_interview_url(email.get('body', ''))
+                if interview_url:
+                    print(f"Interview link detected: {interview_url}")
+                    interview_result = self._handle_interview_link(
+                        interview_url=interview_url,
+                        thread_id=thread_id,
+                        company=extracted_info.get('company'),
+                        position=extracted_info.get('position')
+                    )
+                    if interview_result.get('success'):
+                        print(f"Interview session started: {interview_url}")
+                    processed += 1
+                    continue
                 
                 # Check if escalation needed
                 if response_data.get('requires_escalation'):
@@ -379,4 +402,52 @@ class JobApplicationOrchestrator:
                 print(f"  - {item['company']} - {item['position']}: {item['reason']}")
         
         print("="*60 + "\n")
+    
+    def _extract_interview_url(self, text: str) -> Optional[str]:
+        """Extract interview URL from email body."""
+        import re
+        patterns = [
+            r'https://[^\s<>"]*interview[^\s<>"]*',
+            r'join[^"\'<>]*?meeting[^"\'<>]*?[:=]\s*([^\s"\'<>]+)',
+            r'interview[^"\'<>]*?link[^"\'<>]*?[:=]\s*([^\s"\'<>]+)',
+            r'interview[^"\'<>]*?url[^"\'<>]*?[:=]\s*([^\s"\'<>]+)',
+        ]
+        
+        for pattern in patterns:
+            matches = re.findall(pattern, text, re.IGNORECASE)
+            if matches:
+                url = matches[0] if isinstance(matches[0], str) else matches[0]
+                # Clean up URL
+                url = url.strip().rstrip('.,;:')
+                if url.startswith('http'):
+                    return url
+        return None
+    
+    def _handle_interview_link(self, interview_url: str, thread_id: str, company: str = None, position: str = None) -> Dict:
+        """Handle interview link from email."""
+        try:
+            result = self.interview_agent.start_interview(
+                interview_url=interview_url,
+                company=company,
+                position=position
+            )
+            
+            # Log to conversation state
+            if self.state_manager:
+                state = self.state_manager.get_state(thread_id)
+                if state:
+                    self.state_manager.update_state(thread_id, {
+                        'stage': 'scheduling',
+                        'interview_url': interview_url,
+                        'metadata': {
+                            **state.metadata,
+                            'interview_started': True,
+                            'interview_url': interview_url
+                        }
+                    })
+            
+            return result
+        except Exception as e:
+            print(f"Error starting interview: {e}")
+            return {"success": False, "error": str(e)}
 
